@@ -44,18 +44,42 @@ python steam_rental_bot.py
    - `/set_funpay_token YOUR_GOLDEN_KEY`
    - `/add_account` для добавления Steam аккаунтов
 
-## Настройка FunPay
+# Установка и запуск Steam Rental Bot на Windows
 
+## 1. Установка Python 3.10+
+1. Скачайте установщик Python с официального сайта: [https://www.python.org/downloads/](https://www.python.org/downloads/)
+2. Запустите установщик.
+3. Обязательно отметьте опцию **Add Python to PATH**.
+4. Нажмите **Install Now** и дождитесь завершения установки.
+5. Проверьте установку в командной строке:
+\`\`\`cmd
+python --version
+\`\`\`
+
+## 2. Установка зависимостей
+1. Откройте Командную строку (Win + R → cmd → Enter) или PowerShell.
+2. Перейдите в папку с проектом:
+   cd путь\к\папке\с\ботом
+3. Установите зависимости:
+   pip install -r requirements.txt
+
+## 3. Первичная настройка
 1. Получите Golden Key: FunPay → Код элемента → Storage → golde_key Value
-2. В Telegram: `/set_funpay_token YOUR_GOLDEN_KEY`
-3. Перезапустите бота
+2. Создайте ТГ-бота через @BotFather и сохраните токен созданного бота.
 
-## Хостинг 24/7
+## 4. Запуск бота
 
-Для работы 24/7 рекомендуется использовать:
-- Replit.com (бесплатно)
-- VPS сервер
-- UptimeRobot для пинга `/ping` каждые 5 минут
+python steam_rental_bot.py
+
+## 5. Настройка через Telegram
+
+1. В Telegram откройте чат с ботом.
+2. Выполните команду для установки токена:
+   /set_funpay_token YOUR_GOLDEN_KEY
+3. Узнайте ваш UID через /myid -> Поставьте этот ID в secrets.yaml admin_chat_id: ЭТО НУЖНО ДЛЯ БЕЗОПАСНОСТИ
+4. Перезапустите steam_rental_bot.py
+5. Добавьте Steam аккаунты:
+   /add_account
 
 ## Структура файлов
 
