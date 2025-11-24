@@ -46,7 +46,7 @@ python steam_rental_bot.py
 
 ## Настройка FunPay
 
-1. Получите Golden Key: FunPay → Настройки → API
+1. Получите Golden Key: FunPay → Код элемента → Storage → golde_key Value
 2. В Telegram: `/set_funpay_token YOUR_GOLDEN_KEY`
 3. Перезапустите бота
 
@@ -60,8 +60,8 @@ python steam_rental_bot.py
 ## Структура файлов
 
 - `steam_rental_bot.py` - основной код бота
-- `accounts.json` - база Steam аккаунтов
-- `config.json` - конфигурация (FunPay токен)
+- `accounts.yaml` - база Steam аккаунтов
+- `secrets.yaml` - конфигурация (FunPay/tg токен)
 - `steam_rental_bot.log` - логи работы
 - `mafiles/` - папка для Steam Guard файлов
 

@@ -1,0 +1,172 @@
+2025-11-25 00:10:09,821 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.20.172.50:5000
+2025-11-25 00:10:09,821 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-25 00:10:10,346 - httpx - INFO - HTTP Request: POST https://api.telegram.org/botYOUR_TELEGRAM_TOKEN/getMe "HTTP/1.1 404 Not Found"
+2025-11-25 00:10:10,346 - telegram.ext - ERROR - Network Retry Loop (Bootstrap Initialize Application): Invalid token. Aborting retry loop.
+Traceback (most recent call last):
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 854, in initialize
+    await self.get_me()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 1999, in get_me
+    return await super().get_me(
+           ^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 985, in get_me
+    result = await self._post(
+             ^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 372, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.InvalidToken: Not Found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 134, in network_retry_loop
+    await do_action()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 109, in do_action
+    await action_cb()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_application.py", line 489, in initialize
+    await self.bot.initialize()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 318, in initialize
+    await super().initialize()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 856, in initialize
+    raise InvalidToken(f"The token `{self._token}` was rejected by the server.") from exc
+telegram.error.InvalidToken: The token `YOUR_TELEGRAM_TOKEN` was rejected by the server.
+2025-11-25 00:16:26,661 - httpx - INFO - HTTP Request: POST https://api.telegram.org/botYOUR_TELEGRAM_TOKEN/getMe "HTTP/1.1 404 Not Found"
+2025-11-25 00:16:26,662 - telegram.ext - ERROR - Network Retry Loop (Bootstrap Initialize Application): Invalid token. Aborting retry loop.
+Traceback (most recent call last):
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 854, in initialize
+    await self.get_me()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 1999, in get_me
+    return await super().get_me(
+           ^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 985, in get_me
+    result = await self._post(
+             ^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 372, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.InvalidToken: Not Found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 134, in network_retry_loop
+    await do_action()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_utils/networkloop.py", line 109, in do_action
+    await action_cb()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_application.py", line 489, in initialize
+    await self.bot.initialize()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 318, in initialize
+    await super().initialize()
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/_bot.py", line 856, in initialize
+    raise InvalidToken(f"The token `{self._token}` was rejected by the server.") from exc
+telegram.error.InvalidToken: The token `YOUR_TELEGRAM_TOKEN` was rejected by the server.
+2025-11-25 00:32:13,070 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getMe "HTTP/1.1 200 OK"
+2025-11-25 00:32:13,166 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/deleteWebhook "HTTP/1.1 200 OK"
+2025-11-25 00:32:13,167 - telegram.ext.Application - INFO - Application started
+2025-11-25 00:32:23,547 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:32:23,852 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:32:24,355 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/sendMessage "HTTP/1.1 200 OK"
+2025-11-25 00:32:33,936 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:32:44,042 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:32:48,253 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:32:48,886 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/sendMessage "HTTP/1.1 200 OK"
+2025-11-25 00:32:58,121 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:08,229 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:08,955 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:18,532 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:18,533 - telegram.ext.Application - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_application.py", line 1315, in process_update
+    await coroutine
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_handlers/basehandler.py", line 159, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wobir/tg-bot-funpay/steam_rental_bot.py", line 109, in list_accounts
+    await update.message.reply_text("пусто")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'reply_text'
+2025-11-25 00:33:19,622 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:20,115 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/sendMessage "HTTP/1.1 200 OK"
+2025-11-25 00:33:26,946 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:26,946 - telegram.ext.Application - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_application.py", line 1315, in process_update
+    await coroutine
+  File "/home/wobir/tg-bot-funpay/.venv/lib/python3.13/site-packages/telegram/ext/_handlers/basehandler.py", line 159, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wobir/tg-bot-funpay/steam_rental_bot.py", line 103, in add_account_command
+    await update.message.reply_text("логин:", reply_markup=InlineKeyboardMarkup(keyboard))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'reply_text'
+2025-11-25 00:33:32,853 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:33,387 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/sendMessage "HTTP/1.1 200 OK"
+2025-11-25 00:33:37,682 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:37,793 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/answerCallbackQuery "HTTP/1.1 200 OK"
+2025-11-25 00:33:37,907 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/editMessageText "HTTP/1.1 200 OK"
+2025-11-25 00:33:47,779 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:33:57,891 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:34:04,592 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot7843320285:AAH6rUQnXzXKL4iaxuCmIeCfPK5Y_oKF2Ko/getUpdates "HTTP/1.1 200 OK"
+2025-11-25 00:34:04,592 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+2025-11-25 00:34:04,592 - telegram.ext.Application - INFO - Application.stop() complete
