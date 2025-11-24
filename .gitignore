@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+*.swp
+*.swo
+
+# Environments
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# Logs
+*.log
+steam_rental_bot.log
+
+# Secrets and configs
+secrets.yaml
+config.yaml
+
+# Accounts and temporary data
+accounts.yaml
+*.json
+*.db
+*.sqlite3
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Uvicorn / FastAPI
+*.pid
