@@ -65,8 +65,20 @@ class SteamRentalBot:
         self.funpay_token = FUNPAY_TOKEN
         self.funpay_account: Optional[Account] = None
         self.app_fastapi = FastAPI()
-        self.application = Application.builder().token(TELEGRAM_TOKEN).build()
-        self.setup_handlers()
+        # thread-safety lock for shared state (accounts, active_rentals)
+        self.lock = threading.RLock()
+
+        # Initialize Telegram application only if token present
+        if TELEGRAM_TOKEN:
+            try:
+                self.application = Application.builder().token(TELEGRAM_TOKEN).build()
+                self.setup_handlers()
+            except Exception as e:
+                logger.error(f"Не удалось создать Telegram Application: {e}")
+                self.application = None
+        else:
+            logger.warning("TELEGRAM_TOKEN не задан — Telegram функции отключены")
+            self.application = None
         self.setup_fastapi()
 
     # ----------------- YAML -----------------
@@ -92,6 +104,8 @@ class SteamRentalBot:
 
     # ----------------- Handlers -----------------
     def setup_handlers(self):
+        if not self.application:
+            return
         self.application.add_handler(CommandHandler("start", self.start_command))
         self.application.add_handler(CommandHandler("myid", self.myid_command))
         self.application.add_handler(CommandHandler("add_account", self.add_account_command))
@@ -208,9 +222,10 @@ class SteamRentalBot:
 
     # ----------------- Вспомогательные -----------------
     def get_free_account(self) -> Optional[str]:
-        for login, data in self.accounts.items():
-            if data.get('status') == 'free':
-                return login
+        with self.lock:
+            for login, data in self.accounts.items():
+                if data.get('status') == 'free':
+                    return login
         return None
 
     def generate_steam_guard_code(self, mafile_path: str) -> Optional[str]:
@@ -227,7 +242,28 @@ class SteamRentalBot:
         return True
 
     def send_telegram_notification(self, message: str):
-        asyncio.create_task(self.application.bot.send_message(chat_id=ADMIN_CHAT_ID, text=message))
+        if not self.application:
+            logger.info(f"Telegram уведомление пропущено (бот не инициализирован): {message}")
+            return
+
+        coro = self.application.bot.send_message(chat_id=ADMIN_CHAT_ID, text=message)
+        # Try to schedule in an existing running loop if available, otherwise run synchronously
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = None
+
+        try:
+            if loop and loop.is_running():
+                try:
+                    asyncio.run_coroutine_threadsafe(coro, loop)
+                except Exception:
+                    loop.create_task(coro)
+            else:
+                # No running loop in this thread — run the coroutine safely
+                asyncio.run(coro)
+        except Exception as e:
+            logger.error(f"Не удалось отправить Telegram уведомление: {e}")
 
     # ----------------- Мониторы -----------------
     def rental_monitor(self):
@@ -235,17 +271,23 @@ class SteamRentalBot:
             try:
                 now = time.time()
                 expired = []
-                for chat_id, rental in active_rentals.items():
-                    remaining = rental['end_time'] - now
-                    if remaining <= 0:
-                        expired.append(chat_id)
-                for chat_id in expired:
-                    login = active_rentals[chat_id]['login']
-                    self.change_password(login)
-                    self.accounts[login]['status'] = 'free'
-                    self.save_yaml(ACCOUNTS_FILE, self.accounts)
-                    del active_rentals[chat_id]
-                    self.send_telegram_notification(f"🏁 Аренда для {login} завершена")
+                # copy keys to avoid runtime change issues
+                with self.lock:
+                    for chat_id, rental in list(active_rentals.items()):
+                        remaining = rental['end_time'] - now
+                        if remaining <= 0:
+                            expired.append(chat_id)
+                    for chat_id in expired:
+                        login = active_rentals[chat_id]['login']
+                        self.change_password(login)
+                        if login in self.accounts:
+                            self.accounts[login]['status'] = 'free'
+                            self.save_yaml(ACCOUNTS_FILE, self.accounts)
+                        try:
+                            del active_rentals[chat_id]
+                        except KeyError:
+                            pass
+                        self.send_telegram_notification(f"🏁 Аренда для {login} завершена")
             except Exception as e:
                 logger.error(f"Ошибка мониторинга аренды: {e}")
             time.sleep(60)
@@ -273,20 +315,26 @@ class SteamRentalBot:
             order.send_message("🚫 Нет свободных аккаунтов")
             self.send_telegram_notification(f"❌ Нет свободных аккаунтов для заказа {order.id}")
             return
-        account_data = self.accounts[free_login]
-        account_data['status'] = 'rented'
-        self.save_yaml(ACCOUNTS_FILE, self.accounts)
-        order.send_message(
-            f"👋 Ваш аккаунт:\n🔑 Логин: {free_login}\n🔒 Пароль: {account_data['password']}\n📲 !код для Steam Guard"
-        )
-        active_rentals[chat_id] = {
-            'login': free_login,
-            'end_time': time.time() + 3600,
-            'api_key': account_data['api_key'],
-            'order_id': order.id,
-            'bonus_given': False
-        }
-        self.send_telegram_notification(f"🆕 Новый заказ {order.id} от {order.buyer.username}")
+        with self.lock:
+            account_data = self.accounts.get(free_login)
+            if not account_data:
+                order.send_message("🚫 Ошибка: аккаунт не найден")
+                return
+            account_data['status'] = 'rented'
+            self.save_yaml(ACCOUNTS_FILE, self.accounts)
+            order.send_message(
+                f"👋 Ваш аккаунт:\n🔑 Логин: {free_login}\n🔒 Пароль: {account_data.get('password')}\n📲 !код для Steam Guard"
+            )
+            active_rentals[chat_id] = {
+                'login': free_login,
+                'end_time': time.time() + 3600,
+                'api_key': account_data.get('api_key'),
+                'order_id': order.id,
+                'bonus_given': False
+            }
+        buyer = getattr(order, 'buyer', None)
+        buyer_name = getattr(buyer, 'username', str(buyer))
+        self.send_telegram_notification(f"🆕 Новый заказ {order.id} от {buyer_name}")
 
     def handle_new_message(self, message):
         chat_id = message.chat_id
@@ -300,7 +348,10 @@ class SteamRentalBot:
         threading.Thread(target=lambda: uvicorn.run(self.app_fastapi, host="0.0.0.0", port=8000), daemon=True).start()
         threading.Thread(target=self.rental_monitor, daemon=True).start()
         threading.Thread(target=self.start_funpay_listener, daemon=True).start()
-        self.application.run_polling()
+        if self.application:
+            self.application.run_polling()
+        else:
+            logger.warning("Telegram polling не запущен (бот не инициализирован).")
 
 
 if __name__ == "__main__":
