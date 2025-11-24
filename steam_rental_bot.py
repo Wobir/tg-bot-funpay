@@ -27,15 +27,13 @@ logger = logging.getLogger(__name__)
 
 SECRETS_FILE = "secrets.yaml"
 ACCOUNTS_FILE = "accounts.yaml"
-CONFIG_FILE = "config.yaml"
 
 example_secrets = {
     "telegram_token": "YOUR_TELEGRAM_TOKEN",
-    "admin_chat_id": 123456789
-}
-example_config = {
+    "admin_chat_id": 123456789,
     "funpay_token": "YOUR_FUNPAY_TOKEN"
 }
+
 example_accounts = {}
 
 def ensure_file(path: str, example: dict):
@@ -45,7 +43,6 @@ def ensure_file(path: str, example: dict):
         print(f"[INFO] {path} создан с примером. Замените значения на реальные.")
 
 ensure_file(SECRETS_FILE, example_secrets)
-ensure_file(CONFIG_FILE, example_config)
 ensure_file(ACCOUNTS_FILE, example_accounts)
 
 with open(SECRETS_FILE, 'r', encoding='utf-8') as f:
@@ -53,11 +50,7 @@ with open(SECRETS_FILE, 'r', encoding='utf-8') as f:
 
 TELEGRAM_TOKEN = secrets.get("telegram_token")
 ADMIN_CHAT_ID = secrets.get("admin_chat_id")
-
-with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-    config = yaml.safe_load(f) or {}
-
-FUNPAY_TOKEN = config.get("funpay_token")
+FUNPAY_TOKEN = secrets.get("funpay_token")
 
 active_rentals: Dict[int, Dict[str, Any]] = {}
 user_states: Dict[int, Dict[str, Any]] = {}
@@ -86,6 +79,16 @@ class SteamRentalBot:
     def save_yaml(self, path: str, data: dict):
         with open(path, 'w', encoding='utf-8') as f:
             yaml.safe_dump(data, f, allow_unicode=True)
+
+    # Сохраняем токен FunPay в secrets.yaml
+    def save_secrets(self):
+        secrets_data = {
+            "telegram_token": TELEGRAM_TOKEN,
+            "admin_chat_id": ADMIN_CHAT_ID,
+            "funpay_token": self.funpay_token
+        }
+        with open(SECRETS_FILE, 'w', encoding='utf-8') as f:
+            yaml.safe_dump(secrets_data, f, allow_unicode=True)
 
     # ----------------- Handlers -----------------
     def setup_handlers(self):
@@ -120,7 +123,7 @@ class SteamRentalBot:
             await update.message.reply_text("❌ Формат: /set_funpay_token <token>")
             return
         self.funpay_token = context.args[0]
-        self.save_yaml(CONFIG_FILE, {"funpay_token": self.funpay_token})
+        self.save_secrets()
         await update.message.reply_text("✅ FunPay токен установлен. Перезапустите бота.")
         logger.info("FunPay токен установлен")
 
@@ -202,38 +205,6 @@ class SteamRentalBot:
                 self.save_yaml(ACCOUNTS_FILE, self.accounts)
                 await update.message.reply_text(f"✅ Аккаунт {login} добавлен 🎉")
                 del user_states[uid]
-
-        # ------------------ Покупатель FunPay ------------------
-        elif update.effective_user.id != ADMIN_CHAT_ID and update.message:
-            chat_id = update.effective_chat.id
-            if chat_id not in active_rentals:
-                return
-            rental = active_rentals[chat_id]
-            login = rental['login']
-            account_data = self.accounts[login]
-            t = text.lower()
-
-            if t in ('!код', '!steamguard'):
-                code = self.generate_steam_guard_code(account_data['mafile_path'])
-                if code:
-                    await update.message.reply_text(f"📲 Steam Guard код: {code}")
-                else:
-                    await update.message.reply_text("❌ Ошибка генерации кода")
-            elif t == '!время':
-                remaining = max(0, int(rental['end_time'] - time.time()))
-                minutes, seconds = divmod(remaining, 60)
-                await update.message.reply_text(f"⏳ Осталось {minutes} мин {seconds} сек")
-            elif t == '!игры':
-                await update.message.reply_text(f"🎮 Игры: {', '.join(account_data.get('games', []))}")
-            elif t == '!помощь':
-                await update.message.reply_text("ℹ️ Команды: !код, !время, !игры, !связь")
-            elif t == '!связь':
-                pending_contact_messages.add(chat_id)
-                await update.message.reply_text("📩 Напишите сообщение продавцу")
-            elif chat_id in pending_contact_messages:
-                await update.message.reply_text("✅ Сообщение отправлено продавцу!")
-                self.send_telegram_notification(f"📞 Сообщение от чата {chat_id}: {text}")
-                pending_contact_messages.discard(chat_id)
 
     # ----------------- Вспомогательные -----------------
     def get_free_account(self) -> Optional[str]:
